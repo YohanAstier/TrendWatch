@@ -81,7 +81,7 @@ class AI():
         else :
             self.model = pickle.load(open(model_path, 'rb'))
 
-    def predict_message(self, message, model_path, target_mode):
+    def predict_message(self, message):
         if self.mode != Mode.NONE: 
             return self.model.predict_proba([message])
         return []
