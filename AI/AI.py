@@ -1,7 +1,8 @@
 import pandas as pd
 import pickle
 from enum import Enum
-
+import nltk
+import string 
 
 # Load Text Cleaning Pkgs
 import neattext.functions as nfx
@@ -27,7 +28,7 @@ class AI():
     def __init__(self, model_path = None, mode = Mode.NONE):
         self.load_model(model_path, mode)
         
-
+    
     def train_AI():
         df = pd.read_csv("datasets/dataset.csv", delimiter=';')
         dir(nfx)
@@ -73,6 +74,7 @@ class AI():
         pickle.dump(pipe_lr, pipeline_file)
         pipeline_file.close()
 
+    """Load another AI model"""
     def load_model(self, model_path, target_mode):
         self.mode = target_mode            
         if target_mode == Mode.NONE :
@@ -81,14 +83,28 @@ class AI():
         else :
             self.model = pickle.load(open(model_path, 'rb'))
 
+    """Predict the value of a message"""
     def predict_message(self, message):
         if self.mode != Mode.NONE: 
             return self.model.predict_proba([message])
         return []
     
+    """Return the names of the class of the AI"""
     def emotions_label(self):
         if self.mode != Mode.NONE:
             return list(self.model.classes_)
         return []
+    
+    def preprocess(sentence):
+        stop_words = nltk.corpus.stopwords.words('english') + list(string.punctuation)
+        words = nltk.word_tokenize(sentence.lower())
+        return [word for word in words if word not in stop_words]
+    
+    def word_cloud(messages, words_number):
+        clean_messages = AI.preprocess(" ".join(messages))
+        frequency = nltk.FreqDist(clean_messages).most_common(words_number)
+        return [duo[0] for duo in frequency]
+
+
 
 
